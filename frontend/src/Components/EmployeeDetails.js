@@ -6,27 +6,30 @@ import { GetEmployeeDetailsById } from '../api';
 const EmployeeDetails = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [employee, setEmployee] = useState({});
+    const [employee, setEmployee] = useState(null);
 
-    const fetchEmployeeDetails = async () => {
-        try {
-            const data = await GetEmployeeDetailsById(id);
-            setEmployee(data);
-        } catch (err) {
-            alert('Error', err);
-        }
-    }
     useEffect(() => {
-        fetchEmployeeDetails();
-    }, [id])
+        const fetchData = async () => {
+            try {
+                const data = await GetEmployeeDetailsById(id);
+                setEmployee(data);
+            } catch (err) {
+                console.log(err);
+                alert('Error fetching employee details');
+            }
+        };
 
+        fetchData();
+    }, [id]);
+
+    // Loading state
     if (!employee) {
-        return <div>Employee not found</div>;
+        return <div className="text-center mt-5">Loading...</div>;
     }
 
     return (
         <div className="container mt-5">
-            <div className="card">
+            <div className="card shadow">
                 <div className="card-header">
                     <h2>Employee Details</h2>
                 </div>
@@ -47,7 +50,11 @@ const EmployeeDetails = () => {
                             <p><strong>Salary:</strong> {employee.salary}</p>
                         </div>
                     </div>
-                    <button className="btn btn-primary" onClick={() => navigate('/employee')}>
+
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => navigate('/employee')}
+                    >
                         Back
                     </button>
                 </div>
